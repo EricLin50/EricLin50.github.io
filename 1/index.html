@@ -40,12 +40,12 @@
     <div style="text-align: center;">
     <img src="images/Screenshot 2025-09-12 at 1.13.58 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
     </div>
-    <p style="text-align: center;"> 
+    <p style="max-width: 600px; margin: auto; text-align: center;"> 
         Last screenshot displays the displacements used to align the image. First tuple is the 
         green channel displacement while the second tuple is the red channel displacement.
         <br> <br> <br>
     </p>
-    <p style="text-align: center;"> 
+    <p style="max-width: 600px; margin: auto; text-align: center;"> 
        With the small jpg image, I aligned the image using an L2 norm. I cropped the image 30 pixels from each side
        to avoid weird displacement artifacts. Then I used a for loop to check which displacement (from -15 to 15) would give the lowest L2 norm.
        After finding the best displacement, I shifted the channels accordingly and combined them to form the final image.
@@ -75,7 +75,7 @@
     <div style="text-align: center;">
     <img src="images/Screenshot 2025-09-12 at 5.48.47 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
     </div>
-     <p style="text-align: center;"> 
+     <p style="max-width: 600px; margin: auto; text-align: center;"> 
         With the larger tif files, I need a more efficient method to align the images. I implemented an image pyramid
         to recursively align a subsampled version of the image. I assume that each alignment once made is roughly correct
         so I only check displacements from -15 to 15 at each level of the pyramid.
