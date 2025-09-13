@@ -60,9 +60,29 @@
             <img src="images/Screenshot 2025-09-12 at 5.42.37 PM.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
         </div>
     </div>
+
     <div style="text-align: center;">
     <img src="images/Screenshot 2025-09-12 at 5.42.50 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
     </div>
-    <p style="text-align: center;"> 
+        <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 5.48.32 PM.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 5.48.39 PM.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+    </div>
+    <div style="text-align: center;">
+    <img src="images/Screenshot 2025-09-12 at 5.48.47 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
+    </div>
+     <p style="text-align: center;"> 
+        With the larger tif files, I need a more efficient method to align the images. I implemented an image pyramid
+        to recursively align a subsampled version of the image. I assume that each alignment once made is roughly correct
+        so I only check displacements from -15 to 15 at each level of the pyramid.
+        
+        However, the image pyramid alone is still too slow so at the upper levels, I cropped the image to only include 
+        the center 1000x1000 pixels to speed up the code.
+         <br>
+    </p>
     </body>
 </html>
