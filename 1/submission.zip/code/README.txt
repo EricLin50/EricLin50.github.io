@@ -1,1 +1,0 @@
-You should only need to change the imname variable with the path to the file you want to run. Then just run all
