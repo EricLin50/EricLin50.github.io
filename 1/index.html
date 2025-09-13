@@ -30,11 +30,23 @@
         <h3 style="text-align: center;">Small jpg image</h3>
     <div class="row">
         <div class="column">
-            <img src="/Users/nicklin/Desktop/cs180/EricLin50.github.io/1/images/Screenshot 2025-09-12 at 1.13.50 PM.png" alt="Unaligned Cathedral" style="max-width: 400px; height: auto;">
+            <img src="images/Screenshot 2025-09-12 at 1.13.50 PM.png" alt="Unaligned Cathedral" style="max-width: 400px; height: auto;">
         </div>
         <div class="column">
-            <img src="/Users/nicklin/Desktop/cs180/EricLin50.github.io/1/images/Screenshot 2025-09-12 at 1.14.07 PM.png" alt="Aligned Cathedral" style="max-width: 400px; height: auto;">
+            <img src="images/Screenshot 2025-09-12 at 1.14.07 PM.png" alt="Aligned Cathedral" style="max-width: 400px; height: auto;">
         </div>
     </div>
+    <img src="images/Screenshot 2025-09-12 at 1.13.58 PM.png" alt="Displacement" style="max-width: 400px; height: auto; text-align: center;">
+    <p style="text-align: center;"> 
+        Displacement used. First tuple is the green channel displacement while the second tuple is the red channel displacement.
+        <br>
+    </p>
+    <p style="text-align: center;"> 
+       With the small jpg image, I aligned the image using an L2 norm. I cropped the image 30 pixels from each side
+       to avoid weird displacement artifacts. Then I used a for loop to check which displacement (from -15 to 15) would give the lowest L2 norm.
+       After finding the best displacement, I shifted the channels accordingly and combined them to form the final image.
+         <br>
+    </p>
+    <h3 style="text-align: center;">Large tif files</h3>
     </body>
 </html>
