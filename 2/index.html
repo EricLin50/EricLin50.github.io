@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        * {
+        box-sizing: border-box;
+        }
+
+        .column {
+        float: left;
+        width: auto;
+        padding: 0;       /* remove extra padding */
+        margin-right: 10px; /* small gap if you want */
+        }
+
+        /* Clearfix (clear floats) */
+        .row::after {
+        text-align: center;
+        content: "";
+        clear: both;
+        display: table;
+        }
+    </style>
+    <body>  
+        <h1 style="text-align: center;">Project 2</h1>
+        <h3 style="text-align: center;">Small jpg image</h3>
+    <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 1.13.50 PM.png" alt="Unaligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 1.14.07 PM.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+    </div>
+    <div style="text-align: center;">
+    <img src="images/Screenshot 2025-09-12 at 1.13.58 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
+    </div>
+    <br>
+    <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        Last screenshot displays the displacements used to align the image. First tuple is the 
+        green channel displacement while the second tuple is the red channel displacement.
+        <br> <br> <br>
+    </p>
+    <p style="max-width: 600px; margin: auto; text-align: center;"> 
+       With the small jpg image, I aligned the image using an L2 norm. I cropped the image 30 pixels from each side
+       to avoid weird displacement artifacts. Then I used a for loop to check which displacement (from -15 to 15) would give the lowest L2 norm.
+       After finding the best displacement, I shifted the channels accordingly and combined them to form the final image.
+         <br>
+    </p>
+    <h3 style="text-align: center;">Large tif files</h3>
+    <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 5.42.42 PM.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 5.42.37 PM.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+    <img src="images/Screenshot 2025-09-12 at 5.42.50 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
+    </div>
+        <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 5.48.32 PM.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/Screenshot 2025-09-12 at 5.48.39 PM.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+    </div>
+    <div style="text-align: center;">
+    <img src="images/Screenshot 2025-09-12 at 5.48.47 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
+    </div>
+    <br>
+     <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        With the larger tif files, I need a more efficient method to align the images. I implemented an image pyramid
+        to recursively align a subsampled version of the image. I assume that each alignment once made is roughly correct
+        so I only check displacements from -15 to 15 at each level of the pyramid.
+        
+        However, the image pyramid alone is still too slow so at the upper levels, I cropped the image to only include 
+        the center 1000x1000 pixels to speed up the code.
+         <br>
+    </p>
+    </body>
+</html>
