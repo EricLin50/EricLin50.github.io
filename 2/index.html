@@ -142,6 +142,22 @@
         <div style="text-align: center;">
         <img src="images/2.2/diving.png" alt="Displacement" style="max-width: 600px; height: auto;">
         </div>
+         <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        Additional examples
+            <br>
+        </p>
+         <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/2.2/curry.webp" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/2.2/lebron.webp" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        </div>
+        <br>
+        <div style="text-align: center;">
+        <img src="images/2.2/Basketball.png" alt="Displacement" style="max-width: 600px; height: auto;">
+        </div>
         <h3 style="text-align: center;">2.3</h3>
         <div class="row" style="text-align: center;">
         <div class="column">
@@ -153,6 +169,47 @@
         </div>
         <br>
         <h3 style="text-align: center;">2.4</h3>
-
+        <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        To create multiresolution blending, I first create the gaussian and laplacian stacks of both images as well as for the mask.
+            <br>
+        </p>
+         <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/2.4/redwood.jpeg" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/2.4/sf.webp" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        </div>
+                <div style="text-align: center;">
+        <img src="images/2.4/stacks.png" alt="Displacement" style="max-width: 600px; height: auto;">
+        </div>
+                <div style="text-align: center;">
+        <img src="images/2.4/mask.png" alt="Displacement" style="max-width: 600px; height: auto;">
+        </div>
+        <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        With all of these stacks, I start with the last gaussian layer on the gaussian stack and 
+        iteratively add the laplacian layers multiplied by the mask's laplacian layers. This gives a smooth
+        transition between the two images. The final blended image is shown below.
+            <br>
+        </p>
+        <div style="text-align: center;">
+        <img src="images/2.4/blend.png" alt="Displacement" style="max-width: 600px; height: auto;">
+        </div>
+                <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        Below is another example of multiresolution blending.
+            <br>
+        </p>
+        <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/2.4/meteorshower.jpg" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/2.4/nighttime.jpg" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        </div>
+         <div style="text-align: center;">
+        <img src="images/2.4/rain.png" alt="Displacement" style="max-width: 600px; height: auto;">
+        </div>
     </body>
 </html>
