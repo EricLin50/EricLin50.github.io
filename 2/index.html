@@ -28,63 +28,87 @@
     </style>
     <body>  
         <h1 style="text-align: center;">Project 2</h1>
-        <h3 style="text-align: center;">Small jpg image</h3>
+        <h3 style="text-align: center;">1.1</h3>
     <div class="row" style="text-align: center;">
         <div class="column">
-            <img src="images/Screenshot 2025-09-12 at 1.13.50 PM.png" alt="Unaligned Cathedral" style="max-width: 800px; height: auto;">
+            <img src="images/1.1/self.png" alt="Self" style="max-width: 800px; height: auto;">
         </div>
         <div class="column">
-            <img src="images/Screenshot 2025-09-12 at 1.14.07 PM.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+            <img src="images/1.1/selfdx.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/1.1/selfdy.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+    </div>
+     <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/1.1/grayscale original.png" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/1.1/box1Filter.png" alt="nope" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/1.1/box2Filter.png" alt="nope" style="max-width: 800px; height: auto;">
         </div>
     </div>
     <div style="text-align: center;">
-    <img src="images/Screenshot 2025-09-12 at 1.13.58 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
+    <img src="images/1.1/1.1 code.png" alt="Displacement" style="max-width: 600px; height: auto;">
     </div>
-    <br>
-    <p style="max-width: 600px; margin: auto; text-align: center;"> 
-        Last screenshot displays the displacements used to align the image. First tuple is the 
-        green channel displacement while the second tuple is the red channel displacement.
-        <br> <br> <br>
-    </p>
-    <p style="max-width: 600px; margin: auto; text-align: center;"> 
-       With the small jpg image, I aligned the image using an L2 norm. I cropped the image 30 pixels from each side
-       to avoid weird displacement artifacts. Then I used a for loop to check which displacement (from -15 to 15) would give the lowest L2 norm.
-       After finding the best displacement, I shifted the channels accordingly and combined them to form the final image.
-         <br>
-    </p>
-    <h3 style="text-align: center;">Large tif files</h3>
+        <h3 style="text-align: center;">1.2</h3>
     <div class="row" style="text-align: center;">
         <div class="column">
-            <img src="images/Screenshot 2025-09-12 at 5.42.42 PM.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
+            <img src="images/1.2/cameraman.png" alt="Cameraman" style="max-width: 800px; height: auto;">
         </div>
         <div class="column">
-            <img src="images/Screenshot 2025-09-12 at 5.42.37 PM.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
+            <img src="images/1.2/magnitude.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/1.2/threshold,25.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
         </div>
     </div>
-
-    <div style="text-align: center;">
-    <img src="images/Screenshot 2025-09-12 at 5.42.50 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
-    </div>
+        <h3 style="text-align: center;">1.3</h3>
         <div class="row" style="text-align: center;">
         <div class="column">
-            <img src="images/Screenshot 2025-09-12 at 5.48.32 PM.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
+            <img src="images/1.3/oneconvolution.png" alt="Unaligned Lugano" style="max-width: 800px; height: auto;">
         </div>
         <div class="column">
-            <img src="images/Screenshot 2025-09-12 at 5.48.39 PM.png" alt="Aligned Lugano" style="max-width: 800px; height: auto;">
+            <img src="images/1.3/smoothened.png alt="Aligned Lugano" style="max-width: 800px; height: auto;">
         </div>
     </div>
     <div style="text-align: center;">
-    <img src="images/Screenshot 2025-09-12 at 5.48.47 PM.png" alt="Displacement" style="max-width: 600px; height: auto;">
+    <img src="images/1.3/smoothened_threshold.png" alt="Displacement" style="max-width: 600px; height: auto;">
     </div>
     <br>
      <p style="max-width: 600px; margin: auto; text-align: center;"> 
-        With the larger tif files, I need a more efficient method to align the images. I implemented an image pyramid
-        to recursively align a subsampled version of the image. I assume that each alignment once made is roughly correct
-        so I only check displacements from -15 to 15 at each level of the pyramid.
-        
-        However, the image pyramid alone is still too slow so at the upper levels, I cropped the image to only include 
-        the center 1000x1000 pixels to speed up the code.
+        With the smoothing gaussian filter, the noise in the image is reduced. As a result, I can 
+        apply a more precise threshold for better edge detection. The detected edges are also
+        more continuous and less broken up.
          <br>
     </p>
+            <h3 style="text-align: center;">2.1</h3>
+         <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/2.1/unsharpened.png" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/2.1/sharpened.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        </div>
+        <br>
+        <p style="max-width: 600px; margin: auto; text-align: center;"> 
+        The sharpened image has more defined edges and details. I can more easily see the contrast in the image.
+        Sharpening images feels like a way to cheat extra details out of a low quality image.
+            <br>
+    </p>
+        <h3 style="text-align: center;">2.2</h3>
+          <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/2.1/unsharpened.png" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/2.1/sharpened.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        </div>
+        <br>
     </body>
 </html>
