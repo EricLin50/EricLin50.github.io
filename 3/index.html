@@ -92,5 +92,58 @@
             <img src="images/3.2/hallpts.png" alt="Self" style="max-width: 800px; height: auto;">
         </div>
         <h3 style="text-align: center;">3.3</h3>
+        <img src="images/3.3/doe.png" alt="Self" style="max-width: 800px; height: auto;">
+        <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/3.3/doeNearestNeighbor.png" alt="Self" style="max-width: 800px; height: auto;">
+            <p>
+                Nearest Neighbor
+            </p>
+        </div>
+        <div class="column">
+            <img src="images/3.3/doebilinear.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+            <p>
+                Bilinear
+            </p>
+        </div>
+        <img src="images/3.3/poster.png" alt="Self" style="max-width: 800px; height: auto;">
+        <div class="row" style="text-align: center;">
+        <div class="column">
+            <img src="images/3.3/posterNearestNeighbor.png" alt="Self" style="max-width: 800px; height: auto;">
+            <p>
+                Nearest Neighbor
+            </p>
+        </div>
+        <div class="column">
+            <img src="images/3.3/posterbilinear.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+            <p>
+                Bilinear
+            </p>
+        </div>
+        <p>
+            In both cases, it appears that bilinear has less aliasing as a result of rectification than nearest neighbor
+        </p>
+        <h3 style="text-align: center;">3.4</h3>
+        <div class="row" style="text-align: center;">
+            <p>
+                Set 1, In front of Evans hall
+            </p>
+        <div class="column">
+            <img src="images/3.4/ecl.png" alt="Self" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/3.4/hall.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        <div class="column">
+            <img src="images/3.4/badcampanile.png" alt="Aligned Cathedral" style="max-width: 800px; height: auto;">
+        </div>
+        <p>
+            While my homographies look good, I could not figure out how to properly align the resultant images despite my attempts.
+            But theoretically, I would first begin by applying the homographies on the corners of the image and using that along with
+            my original corners to determine the bounds of the canvas as well as any necessary offsets. From there, with my list of 
+            corresponding points, I would calculate my Homography H and use that to warp my image. After that, I want to put my images
+            on the canvas. I would do this by first creating a mask for my image. From there I can add all my images onto the canvas, and
+            then divide by the sum of the masks so that my total falls within the normal range for rgb values. 
+        </p>
     </body>
 </html>
