@@ -28,8 +28,14 @@
         centered-figure {
         text-align: center;
         }
+        .centered-figure img {
+            display: block;
+            margin: 0 auto;
+        }
+
     </style>
-    <body>  
+    <body>
+    <h1 style="text-align: center;">Project 5</h1>  
     <h3 style="text-align: center;">0</h3>
         <div class="row" style="text-align: center;">
             <p>
@@ -90,5 +96,28 @@
         </div>
         </div>
         <h3 style="text-align: center;">1.1, 1.2</h3>
+            <figure class="centered-figure">
+                <img src="images/1.1,1.2/base.png", style="width:700px">
+                <figcaption>Base Campanile image reduced to 64x64 resolution</figcaption>
+            </figure>
+            <br>
+        <div class="row" style="text-align: center;">
+            <p>
+                Campanile with noise added
+            </p>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.1,1.2/noise250.png", style="width:500px">
+                <figcaption>5 Inference Steps</figcaption>
+            </figure>
+            
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/0/cowboy.png", style="width:700px">
+                <figcaption>20 Inference Steps</figcaption>
+            </figure>
+        </div>
+        </div>
     </body>
 </head>
