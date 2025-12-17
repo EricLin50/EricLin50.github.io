@@ -199,6 +199,36 @@
                 <img src="images/2.5/cc_unet_loss.png", style="width:1500px">
                 <figcaption>Class Conditioned Unet Loss Graph</figcaption>
         </figure>
+
+        <h3 style="text-align: center;">2.6</h3>
+        <figure class="centered-figure">
+                <img src="images/2.6/cc_unet_1.png", style="width:1500px">
+                <figcaption>Class Conditioned Unet Sample Outputs after 1 Epoch</figcaption>
+        </figure>
+        <figure class="centered-figure">
+                <img src="images/2.6/cc_unet_5.png", style="width:1500px">
+                <figcaption>Class Conditioned Unet Sample Outputs after 5 Epochs</figcaption>
+        </figure>
+        <figure class="centered-figure">
+                <img src="images/2.6/cc_unet_10.png", style="width:1500px">
+                <figcaption>Class Conditioned Unet Sample Outputs after 10 Epochs</figcaption>
+        </figure>
+
+        <p>
+            In getting rid of the learning rate scheduler, I reduced the learning rate from 1e-2 to 1e-3 so the model doesn't
+            diverge during training. I also increased the number of epochs from 10 to 15 to compensate for the lower 
+            learning rate.
+        </p>
+        <br>
+
+        <figure class="centered-figure">
+                <img src="images/2.6/no_scheduler_1.png", style="width:1500px">
+                <figcaption>Class Conditioned Unet with no scheduler sample outputs after 1 epoch</figcaption>
+        </figure>
+        <figure class="centered-figure">
+                <img src="images/2.6/no_scheduler_15.png", style="width:1500px">
+                <figcaption>Class Conditioned Unet with no scheduler sample outputs after 15 epochs</figcaption>
+        </figure>
     </body>
 </head>
 </html>
