@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project 5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        * {
+        box-sizing: border-box;
+        }
+
+        .column {
+        float: left;
+        width: auto;
+        padding: 0;       /* remove extra padding */
+        margin-right: 10px; /* small gap if you want */
+        }
+
+        /* Clearfix (clear floats) */
+        .row::after {
+        text-align: center;
+        content: "";
+        clear: both;
+        display: table;
+        }
+        /* centered-figure {
+        text-align: center;
+        }
+        .centered-figure img {
+            display: block;
+            margin: 0 auto;
+        } */
+        .centered-figure {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+    </style>
+    <body>
+    <h1 style="text-align: center;">Project 5a</h1>  
+    <h3 style="text-align: center;">1.2</h3>
+    <div class="row" style="text-align: center;">
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise0.png", style="width:200px">
+                <figcaption>sigma = 0</figcaption>
+            </figure>
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise2.png", style="width:200px">
+                <figcaption>sigma = 0.2</figcaption>
+            </figure>
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise4.png", style="width:200px">
+                <figcaption>sigma = 0.4</figcaption>
+            </figure>
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise5.png", style="width:200px">
+                <figcaption>sigma = 0.5</figcaption>
+            </figure>
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise6.png", style="width:200px">
+                <figcaption>sigma = 0.6</figcaption>
+            </figure>
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise8.png", style="width:200px">
+                <figcaption>sigma = 0.8</figcaption>
+            </figure>
+        </div>
+        <div class="column">
+            <figure class="centered-figure">
+                <img src="images/1.2/noise10.png", style="width:200px">
+                <figcaption>sigma = 1.0</figcaption>
+            </figure>
+        </div>
+        </div>
