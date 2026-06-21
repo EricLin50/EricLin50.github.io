@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lorenz Attractor Particle Sim</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      flex: 1;
+    }
+
+    #panel {
+      width: 260px;
+      flex-shrink: 0;
+      background: rgba(10, 10, 20, 0.95);
+      border-left: 1px solid #1e2a3a;
+      padding: 20px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h1 {
+      font-size: 13px;
+      font-weight: normal;
+      color: #7af0ff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #1e2a3a;
+      padding-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #4a6a7a;
+      margin-bottom: 6px;
+    }
+
+    .control {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #90b0c0;
+    }
+
+    .control label span {
+      color: #7af0ff;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 3px;
+      background: #1e2a3a;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #7af0ff;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: #aff8ff;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      flex: 1;
+      padding: 8px 4px;
+      background: transparent;
+      border: 1px solid #2a3a4a;
+      color: #7af0ff;
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.15s;
+    }
+
+    button:hover {
+      background: rgba(122, 240, 255, 0.1);
+      border-color: #7af0ff;
+    }
+
+    button:active {
+      background: rgba(122, 240, 255, 0.2);
+    }
+
+    .color-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .color-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .color-swatch.active {
+      border-color: #fff;
+    }
+
+    .stats {
+      font-size: 10px;
+      color: #3a5a6a;
+      line-height: 1.8;
+    }
+
+    .stats span {
+      color: #5a8a9a;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div id="panel">
+  <h1>Lorenz Attractor</h1>
+
+  <div>
+    <div class="section-title">Lorenz Parameters</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="control">
+        <label>σ (sigma) <span id="v-sigma">10</span></label>
+        <input type="range" id="s-sigma" min="1" max="30" step="0.1" value="10">
+      </div>
+      <div class="control">
+        <label>ρ (rho) <span id="v-rho">28</span></label>
+        <input type="range" id="s-rho" min="1" max="60" step="0.1" value="28">
+      </div>
+      <div class="control">
+        <label>β (beta) <span id="v-beta">2.67</span></label>
+        <input type="range" id="s-beta" min="0.1" max="10" step="0.01" value="2.667">
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Simulation</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="control">
+        <label>Particles <span id="v-count">1500</span></label>
+        <input type="range" id="s-count" min="100" max="5000" step="100" value="1500">
+      </div>
+      <div class="control">
+        <label>Speed <span id="v-speed">1.0</span></label>
+        <input type="range" id="s-speed" min="0.1" max="4" step="0.05" value="1.0">
+      </div>
+      <div class="control">
+        <label>Tail length <span id="v-tail">60</span></label>
+        <input type="range" id="s-tail" min="1" max="200" step="1" value="60">
+      </div>
+      <div class="control">
+        <label>Trail fade <span id="v-fade">0.04</span></label>
+        <input type="range" id="s-fade" min="0.01" max="0.3" step="0.005" value="0.04">
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Appearance</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="control">
+        <label>Particle size <span id="v-size">1.2</span></label>
+        <input type="range" id="s-size" min="0.5" max="4" step="0.1" value="1.2">
+      </div>
+      <div class="control">
+        <label>Brightness <span id="v-bright">0.7</span></label>
+        <input type="range" id="s-bright" min="0.1" max="1.5" step="0.05" value="0.7">
+      </div>
+      <div style="">
+        <div class="section-title" style="margin-bottom:8px;">Color theme</div>
+        <div class="color-row" id="color-row"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">View</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="control">
+        <label>Rotate X <span id="v-rx">0.3</span></label>
+        <input type="range" id="s-rx" min="-1.57" max="1.57" step="0.01" value="0.3">
+      </div>
+      <div class="control">
+        <label>Rotate Y <span id="v-ry">0.0</span></label>
+        <input type="range" id="s-ry" min="-3.14" max="3.14" step="0.01" value="0.0">
+      </div>
+      <div class="control">
+        <label>Zoom <span id="v-zoom">8</span></label>
+        <input type="range" id="s-zoom" min="2" max="30" step="0.5" value="8">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="btn-pause">Pause</button>
+    <button id="btn-reset">Reset</button>
+  </div>
+
+  <div class="btn-row">
+    <button id="btn-explode">Explode</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+// ── state ────────────────────────────────────────────────────────────────────
+
+const params = {
+  sigma: 10,
+  rho: 28,
+  beta: 8 / 3,
+  count: 1500,
+  speed: 1.0,
+  tail: 60,
+  fade: 0.04,
+  size: 1.2,
+  bright: 0.7,
+  rotX: 0.3,
+  rotY: 0.0,
+  zoom: 8,
+};
+
+const COLOR_THEMES = [
+  { name: 'cyan',   fn: (t) => `hsl(${190 + t * 60},100%,65%)` },
+  { name: 'fire',   fn: (t) => `hsl(${t * 60},100%,55%)` },
+  { name: 'purple', fn: (t) => `hsl(${260 + t * 80},80%,65%)` },
+  { name: 'green',  fn: (t) => `hsl(${100 + t * 40},90%,55%)` },
+  { name: 'white',  fn: (t) => `hsl(0,0%,${55 + t * 40}%)` },
+  { name: 'rainbow',fn: (t) => `hsl(${t * 360},90%,60%)` },
+];
+const SWATCH_COLORS = ['#7af0ff','#ff7a20','#b07aff','#7aff8a','#c8c8c8','#ff7af0'];
+let colorTheme = 0;
+
+let particles = [];
+let paused = false;
+let frameCount = 0;
+let fps = 0;
+let lastFpsTime = performance.now();
+let fpsFrames = 0;
+
+// ── particle ─────────────────────────────────────────────────────────────────
+
+function randomInRange(a, b) { return a + Math.random() * (b - a); }
+
+function makeParticle() {
+  return {
+    x: randomInRange(-20, 20),
+    y: randomInRange(-20, 20),
+    z: randomInRange(0, 40),
+    history: [],
+  };
+}
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < params.count; i++) particles.push(makeParticle());
+}
+
+// ── lorenz step (RK4) ────────────────────────────────────────────────────────
+
+const DT = 0.005;
+
+function lorenzDeriv(x, y, z, s, r, b) {
+  return [
+    s * (y - x),
+    x * (r - z) - y,
+    x * y - b * z,
+  ];
+}
+
+function stepRK4(p) {
+  const { sigma: s, rho: r, beta: b, speed } = params;
+  const steps = Math.max(1, Math.round(speed * 2));
+  const dt = DT * speed / steps;
+
+  for (let i = 0; i < steps; i++) {
+    const [k1x, k1y, k1z] = lorenzDeriv(p.x, p.y, p.z, s, r, b);
+    const [k2x, k2y, k2z] = lorenzDeriv(p.x + dt/2*k1x, p.y + dt/2*k1y, p.z + dt/2*k1z, s, r, b);
+    const [k3x, k3y, k3z] = lorenzDeriv(p.x + dt/2*k2x, p.y + dt/2*k2y, p.z + dt/2*k2z, s, r, b);
+    const [k4x, k4y, k4z] = lorenzDeriv(p.x + dt*k3x, p.y + dt*k3y, p.z + dt*k3z, s, r, b);
+
+    p.x += dt/6 * (k1x + 2*k2x + 2*k3x + k4x);
+    p.y += dt/6 * (k1y + 2*k2y + 2*k3y + k4y);
+    p.z += dt/6 * (k1z + 2*k2z + 2*k3z + k4z);
+  }
+}
+
+// ── projection ───────────────────────────────────────────────────────────────
+
+function project(x, y, z) {
+  const cx = Math.cos(params.rotX), sx = Math.sin(params.rotX);
+  const cy = Math.cos(params.rotY), sy = Math.sin(params.rotY);
+
+  // rotate X
+  let y1 = y * cx - z * sx;
+  let z1 = y * sx + z * cx;
+  // rotate Y
+  let x2 = x * cy + z1 * sy;
+  let z2 = -x * sy + z1 * cy;
+
+  const scale = params.zoom;
+  return [
+    canvas.width / 2 + x2 * scale,
+    canvas.height / 2 - y1 * scale,
+    z2,
+  ];
+}
+
+// ── color ────────────────────────────────────────────────────────────────────
+
+function particleColor(p, alpha) {
+  // map z roughly 0-50 → 0-1
+  const t = Math.max(0, Math.min(1, (p.z - 0) / 50));
+  const base = COLOR_THEMES[colorTheme].fn(t);
+  // inject alpha — replace hsl(...) → hsla(...)
+  return base.replace('hsl(', 'hsla(').replace(')', `,${(alpha * params.bright).toFixed(3)})`);
+}
+
+// ── render ───────────────────────────────────────────────────────────────────
+
+function resize() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+
+function draw() {
+  // fade trail
+  ctx.fillStyle = `rgba(10,10,15,${params.fade})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const tailLen = Math.round(params.tail);
+
+  for (const p of particles) {
+    // draw history trail
+    const hist = p.history;
+    for (let i = 1; i < hist.length; i++) {
+      const alpha = (i / hist.length) * 0.4;
+      const [px, py] = project(hist[i].x, hist[i].y, hist[i].z);
+      const [ppx, ppy] = project(hist[i-1].x, hist[i-1].y, hist[i-1].z);
+      ctx.strokeStyle = particleColor({ z: hist[i].z }, alpha);
+      ctx.lineWidth = params.size * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(ppx, ppy);
+      ctx.lineTo(px, py);
+      ctx.stroke();
+    }
+
+    // draw particle head
+    const [sx, sy] = project(p.x, p.y, p.z);
+    ctx.fillStyle = particleColor(p, 0.95);
+    ctx.beginPath();
+    ctx.arc(sx, sy, params.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ── main loop ────────────────────────────────────────────────────────────────
+
+function tick() {
+  if (!paused) {
+    const tailLen = Math.round(params.tail);
+    for (const p of particles) {
+      p.history.push({ x: p.x, y: p.y, z: p.z });
+      if (p.history.length > tailLen) p.history.shift();
+      stepRK4(p);
+    }
+    frameCount++;
+    fpsFrames++;
+  }
+
+  draw();
+
+  const now = performance.now();
+  if (now - lastFpsTime > 500) {
+    fps = Math.round(fpsFrames * 1000 / (now - lastFpsTime));
+    fpsFrames = 0;
+    lastFpsTime = now;
+    document.getElementById('stats').innerHTML =
+      `FPS <span>${fps}</span><br>` +
+      `Particles <span>${particles.length}</span><br>` +
+      `σ <span>${params.sigma.toFixed(2)}</span>  ρ <span>${params.rho.toFixed(2)}</span>  β <span>${params.beta.toFixed(3)}</span>`;
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// ── controls ─────────────────────────────────────────────────────────────────
+
+function bindSlider(id, key, valueId, fmt) {
+  const el = document.getElementById(id);
+  const vEl = document.getElementById(valueId);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    params[key] = v;
+    vEl.textContent = fmt ? fmt(v) : v;
+  });
+}
+
+bindSlider('s-sigma', 'sigma', 'v-sigma', v => v.toFixed(1));
+bindSlider('s-rho',   'rho',   'v-rho',   v => v.toFixed(1));
+bindSlider('s-beta',  'beta',  'v-beta',  v => v.toFixed(2));
+bindSlider('s-speed', 'speed', 'v-speed', v => v.toFixed(2));
+bindSlider('s-tail',  'tail',  'v-tail',  v => Math.round(v));
+bindSlider('s-fade',  'fade',  'v-fade',  v => v.toFixed(3));
+bindSlider('s-size',  'size',  'v-size',  v => v.toFixed(1));
+bindSlider('s-bright','bright','v-bright',v => v.toFixed(2));
+bindSlider('s-rx',    'rotX',  'v-rx',    v => v.toFixed(2));
+bindSlider('s-ry',    'rotY',  'v-ry',    v => v.toFixed(2));
+bindSlider('s-zoom',  'zoom',  'v-zoom',  v => v.toFixed(1));
+
+document.getElementById('s-count').addEventListener('input', function() {
+  const v = parseInt(this.value);
+  document.getElementById('v-count').textContent = v;
+  params.count = v;
+  while (particles.length < v) particles.push(makeParticle());
+  while (particles.length > v) particles.pop();
+});
+
+document.getElementById('btn-pause').addEventListener('click', function() {
+  paused = !paused;
+  this.textContent = paused ? 'Resume' : 'Pause';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  initParticles();
+});
+
+document.getElementById('btn-explode').addEventListener('click', () => {
+  for (const p of particles) {
+    p.x += randomInRange(-15, 15);
+    p.y += randomInRange(-15, 15);
+    p.z += randomInRange(-10, 10);
+    p.history = [];
+  }
+});
+
+// color swatches
+const colorRow = document.getElementById('color-row');
+SWATCH_COLORS.forEach((c, i) => {
+  const div = document.createElement('div');
+  div.className = 'color-swatch' + (i === 0 ? ' active' : '');
+  div.style.background = c;
+  div.title = COLOR_THEMES[i].name;
+  div.addEventListener('click', () => {
+    colorRow.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    div.classList.add('active');
+    colorTheme = i;
+  });
+  colorRow.appendChild(div);
+});
+
+// drag to rotate
+let dragging = false, dragStart = { x: 0, y: 0 }, rotStart = { x: 0, y: 0 };
+canvas.addEventListener('mousedown', e => {
+  dragging = true;
+  dragStart = { x: e.clientX, y: e.clientY };
+  rotStart = { x: params.rotX, y: params.rotY };
+});
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const dx = (e.clientX - dragStart.x) * 0.005;
+  const dy = (e.clientY - dragStart.y) * 0.005;
+  params.rotY = rotStart.y + dx;
+  params.rotX = Math.max(-1.57, Math.min(1.57, rotStart.x + dy));
+  document.getElementById('s-rx').value = params.rotX;
+  document.getElementById('v-rx').textContent = params.rotX.toFixed(2);
+  document.getElementById('s-ry').value = params.rotY;
+  document.getElementById('v-ry').textContent = params.rotY.toFixed(2);
+});
+window.addEventListener('mouseup', () => dragging = false);
+
+// scroll to zoom
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  params.zoom = Math.max(2, Math.min(30, params.zoom - e.deltaY * 0.02));
+  document.getElementById('s-zoom').value = params.zoom;
+  document.getElementById('v-zoom').textContent = params.zoom.toFixed(1);
+}, { passive: false });
+
+// ── init ─────────────────────────────────────────────────────────────────────
+
+window.addEventListener('resize', resize);
+resize();
+initParticles();
+tick();
+</script>
+</body>
+</html>
