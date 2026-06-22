@@ -221,8 +221,8 @@
         <input type="range" id="s-tail" min="1" max="200" step="1" value="50">
       </div>
       <div class="control">
-        <label>Trail fade <span id="v-fade">0.060</span></label>
-        <input type="range" id="s-fade" min="0.005" max="0.4" step="0.005" value="0.06">
+        <label>Trail alpha <span id="v-fade">0.45</span></label>
+        <input type="range" id="s-fade" min="0.05" max="1.0" step="0.01" value="0.45">
       </div>
     </div>
   </div>
@@ -285,7 +285,7 @@ const ctx = canvas.getContext('2d');
 const P = {
   sigma: 10, rho: 28, beta: 8/3,
   count: 300, speed: 1.0,
-  tail: 50, fade: 0.06,
+  tail: 50, fade: 0.45,
   size: 1.5, bright: 0.8,
   rotX: 0.3, rotY: 0.0, zoom: 8,
 };
@@ -369,21 +369,28 @@ function resize() {
 }
 
 function draw() {
-  ctx.fillStyle = `rgba(10,10,15,${P.fade})`;
+  // Full clear every frame so trail history is always re-projected from 3D.
+  // This means camera movement never causes screen-space smearing.
+  ctx.fillStyle = '#0a0a0f';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (const p of particles) {
     const hist = p.history;
-    if (hist.length > 1) {
-      for (let i = 1; i < hist.length; i++) {
-        const alpha = (i / hist.length) * 0.45;
+    const len = hist.length;
+
+    // Trail: older segments are more transparent
+    if (len > 1) {
+      ctx.lineWidth = P.size * 0.55;
+      for (let i = 1; i < len; i++) {
+        const alpha = (i / len) * P.fade;
         const [x0,y0] = project(hist[i-1].x, hist[i-1].y, hist[i-1].z);
         const [x1,y1] = project(hist[i].x,   hist[i].y,   hist[i].z);
         ctx.strokeStyle = color(hist[i].z, alpha);
-        ctx.lineWidth = P.size * 0.55;
         ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
       }
     }
+
+    // Particle head
     const [sx,sy] = project(p.x, p.y, p.z);
     ctx.fillStyle = color(p.z, 0.95);
     ctx.beginPath(); ctx.arc(sx, sy, P.size, 0, Math.PI*2); ctx.fill();
@@ -435,7 +442,7 @@ bindSlider('s-rho',  'rho',  'v-rho',  v=>v.toFixed(1));
 bindSlider('s-beta', 'beta', 'v-beta', v=>v.toFixed(3));
 bindSlider('s-speed','speed','v-speed',v=>v.toFixed(2));
 bindSlider('s-tail', 'tail', 'v-tail', v=>Math.round(v));
-bindSlider('s-fade', 'fade', 'v-fade', v=>v.toFixed(3));
+bindSlider('s-fade', 'fade', 'v-fade', v=>v.toFixed(2));
 bindSlider('s-size', 'size', 'v-size', v=>v.toFixed(1));
 bindSlider('s-bright','bright','v-bright',v=>v.toFixed(2));
 bindSlider('s-rx',   'rotX', 'v-rx',   v=>v.toFixed(2));
