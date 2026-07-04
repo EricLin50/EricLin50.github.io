@@ -217,12 +217,20 @@
         <input type="range" id="s-speed" min="0.1" max="4" step="0.05" value="1.0">
       </div>
       <div class="control">
+        <label>dt (step size) <span id="v-dt">0.0050</span></label>
+        <input type="range" id="s-dt" min="0.0005" max="0.02" step="0.0005" value="0.005">
+      </div>
+      <div class="control">
         <label>Tail length <span id="v-tail">50</span></label>
         <input type="range" id="s-tail" min="1" max="200" step="1" value="50">
       </div>
       <div class="control">
         <label>Trail alpha <span id="v-fade">0.45</span></label>
         <input type="range" id="s-fade" min="0.05" max="1.0" step="0.01" value="0.45">
+      </div>
+      <div class="control">
+        <label>Particle lifetime <span id="v-life">&infin;</span></label>
+        <input type="range" id="s-life" min="60" max="3020" step="20" value="3020">
       </div>
     </div>
   </div>
@@ -284,8 +292,8 @@ const ctx = canvas.getContext('2d');
 
 const P = {
   sigma: 10, rho: 28, beta: 8/3,
-  count: 300, speed: 1.0,
-  tail: 50, fade: 0.45,
+  count: 300, speed: 1.0, dt: 0.005,
+  tail: 50, fade: 0.45, lifetime: Infinity,
   size: 1.5, bright: 0.8,
   rotX: 0.3, rotY: 0.0, zoom: 8,
 };
@@ -309,8 +317,65 @@ let fps = 0, fpsFrames = 0, lastFpsTime = performance.now();
 
 const rand = (a,b) => a + Math.random()*(b-a);
 
+// ── attractor-based spawn distribution ──────────────────────────────────────
+// New particles should appear where trajectories actually spend time, not
+// uniformly through a box (most of which the attractor never visits). A
+// hidden tracer runs its own trajectory continuously; by ergodicity its
+// long-run path visits every region in proportion to the true invariant
+// distribution, so sampling its past positions gives spawn points that
+// already sit on the attractor's two wings.
+const ATTRACTOR_SAMPLE_CAP = 600;
+const TRACER_BURN_IN = 200; // let the tracer leave its arbitrary start point first
+let tracer = { x: 1, y: 1, z: 1, age: 0 };
+let attractorSamples = [];
+
+function stepTracer() {
+  stepRK4(tracer);
+  tracer.age++;
+  if (tracer.age > TRACER_BURN_IN) {
+    attractorSamples.push({x: tracer.x, y: tracer.y, z: tracer.z});
+    if (attractorSamples.length > ATTRACTOR_SAMPLE_CAP) attractorSamples.shift();
+  }
+}
+
+function attractorSpawnPoint() {
+  if (attractorSamples.length > 20) {
+    const s = attractorSamples[(Math.random() * attractorSamples.length) | 0];
+    return { x: s.x + rand(-1.5,1.5), y: s.y + rand(-1.5,1.5), z: s.z + rand(-1.5,1.5) };
+  }
+  // not enough tracer history yet (just started) - fall back to a rough bounding box
+  return { x: rand(-20,20), y: rand(-20,20), z: rand(0,40) };
+}
+
 function makeParticle() {
-  return { x: rand(-20,20), y: rand(-20,20), z: rand(0,40), history: [] };
+  const {x,y,z} = attractorSpawnPoint();
+  const maxLife = P.lifetime * rand(0.7, 1.3);
+  return {
+    x, y, z, history: [],
+    // stagger initial age so particles don't all fade in/out in unison;
+    // rand(0, Infinity) would itself evaluate to Infinity, so skip staggering
+    // (and skip the fade-in) when lifetime is unlimited
+    age: isFinite(maxLife) ? rand(0, maxLife) : 0, maxLife,
+  };
+}
+
+function respawn(p) {
+  const {x,y,z} = attractorSpawnPoint();
+  p.x = x; p.y = y; p.z = z;
+  p.history = [];
+  p.age = 0;
+  p.maxLife = P.lifetime * rand(0.7, 1.3);
+}
+
+// fraction of a particle's life spent fading in (start) and fading out (end)
+const FADE_IN_FRAC = 0.12, FADE_OUT_FRAC = 0.25;
+
+function lifeFactor(p) {
+  if (!isFinite(p.maxLife)) return 1; // unlimited lifetime - never fades
+  const t = p.age / p.maxLife;
+  if (t < FADE_IN_FRAC) return t / FADE_IN_FRAC;
+  if (t > 1 - FADE_OUT_FRAC) return (1 - t) / FADE_OUT_FRAC;
+  return 1;
 }
 
 function initParticles() {
@@ -319,15 +384,13 @@ function initParticles() {
 
 // ── lorenz RK4 ───────────────────────────────────────────────────────────────
 
-const BASE_DT = 0.005;
-
 function deriv(x,y,z) {
   return [P.sigma*(y-x), x*(P.rho-z)-y, x*y-P.beta*z];
 }
 
 function stepRK4(p) {
   const steps = Math.max(1, Math.round(P.speed * 2));
-  const dt = BASE_DT * P.speed / steps;
+  const dt = P.dt * P.speed / steps;
   for (let i = 0; i < steps; i++) {
     const [k1x,k1y,k1z] = deriv(p.x,p.y,p.z);
     const [k2x,k2y,k2z] = deriv(p.x+dt/2*k1x, p.y+dt/2*k1y, p.z+dt/2*k1z);
@@ -377,22 +440,40 @@ function draw() {
   for (const p of particles) {
     const hist = p.history;
     const len = hist.length;
+    const life = lifeFactor(p);
+    if (life <= 0) continue;
 
-    // Trail: older segments are more transparent
+    // Trail: one path + one gradient stroke per particle, rather than a
+    // separate stroke() per segment - with tail=50 that was up to 15,000
+    // draw calls/frame at 300 particles and was the actual frame-rate
+    // bottleneck (not the physics). The gradient approximates the old
+    // per-segment fade/hue with a handful of color stops instead.
     if (len > 1) {
-      ctx.lineWidth = P.size * 0.55;
-      for (let i = 1; i < len; i++) {
-        const alpha = (i / len) * P.fade;
-        const [x0,y0] = project(hist[i-1].x, hist[i-1].y, hist[i-1].z);
-        const [x1,y1] = project(hist[i].x,   hist[i].y,   hist[i].z);
-        ctx.strokeStyle = color(hist[i].z, alpha);
-        ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+      const pts = new Array(len);
+      for (let i = 0; i < len; i++) pts[i] = project(hist[i].x, hist[i].y, hist[i].z);
+
+      const [x0,y0] = pts[0];
+      const [x1,y1] = pts[len-1];
+      const grad = ctx.createLinearGradient(x0, y0, x1, y1);
+      const stops = Math.min(6, len);
+      for (let s = 0; s < stops; s++) {
+        const frac = s / (stops - 1);
+        const idx = Math.round(frac * (len - 1));
+        const alpha = (idx / len) * P.fade * life;
+        grad.addColorStop(frac, color(hist[idx].z, alpha));
       }
+
+      ctx.lineWidth = P.size * 0.55;
+      ctx.strokeStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(x0, y0);
+      for (let i = 1; i < len; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
     }
 
     // Particle head
     const [sx,sy] = project(p.x, p.y, p.z);
-    ctx.fillStyle = color(p.z, 0.95);
+    ctx.fillStyle = color(p.z, 0.95 * life);
     ctx.beginPath(); ctx.arc(sx, sy, P.size, 0, Math.PI*2); ctx.fill();
   }
 }
@@ -401,11 +482,16 @@ function draw() {
 
 function tick() {
   if (!paused) {
+    stepTracer();
     const tail = Math.round(P.tail);
     for (const p of particles) {
       p.history.push({x:p.x, y:p.y, z:p.z});
       if (p.history.length > tail) p.history.shift();
       stepRK4(p);
+      p.age++;
+      // Infinity >= Infinity is true in JS, so guard explicitly or an
+      // "unlimited" particle would respawn every single frame
+      if (isFinite(p.maxLife) && p.age >= p.maxLife) respawn(p);
     }
     fpsFrames++;
   }
@@ -441,6 +527,7 @@ bindSlider('s-sigma','sigma','v-sigma', v=>v.toFixed(1));
 bindSlider('s-rho',  'rho',  'v-rho',  v=>v.toFixed(1));
 bindSlider('s-beta', 'beta', 'v-beta', v=>v.toFixed(3));
 bindSlider('s-speed','speed','v-speed',v=>v.toFixed(2));
+bindSlider('s-dt',   'dt',   'v-dt',   v=>v.toFixed(4));
 bindSlider('s-tail', 'tail', 'v-tail', v=>Math.round(v));
 bindSlider('s-fade', 'fade', 'v-fade', v=>v.toFixed(2));
 bindSlider('s-size', 'size', 'v-size', v=>v.toFixed(1));
@@ -448,6 +535,14 @@ bindSlider('s-bright','bright','v-bright',v=>v.toFixed(2));
 bindSlider('s-rx',   'rotX', 'v-rx',   v=>v.toFixed(2));
 bindSlider('s-ry',   'rotY', 'v-ry',   v=>v.toFixed(2));
 bindSlider('s-zoom', 'zoom', 'v-zoom', v=>v.toFixed(1));
+
+document.getElementById('s-life').addEventListener('input', function() {
+  const v = parseFloat(this.value);
+  // top notch of the slider means "unlimited" rather than a literal 3020-frame life
+  const infinite = v >= 3020;
+  P.lifetime = infinite ? Infinity : v;
+  document.getElementById('v-life').textContent = infinite ? '∞' : Math.round(v);
+});
 
 document.getElementById('s-count').addEventListener('input', function() {
   const v = parseInt(this.value);
