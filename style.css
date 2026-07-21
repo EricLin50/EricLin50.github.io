@@ -63,33 +63,40 @@ img {
 }
 
 .highlight-card {
+    position: relative;
     display: block;
-    text-decoration: none;
-}
-
-.highlight-card:hover {
-    text-decoration: none;
-}
-
-.highlight-image {
     aspect-ratio: 1 / 1;
     border-radius: 10px;
-    background-size: cover;
-    background-position: center;
+    overflow: hidden;
+    text-decoration: none;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.highlight-card:hover .highlight-image {
+.highlight-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+    text-decoration: none;
+}
+
+.highlight-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
 }
 
 .highlight-title {
-    display: block;
-    margin-top: 10px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: 16px 14px 14px;
+    text-align: center;
     font-family: 'IBM Plex Serif', serif;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: 700;
+    font-size: 21px;
     color: #1a1a1a;
+    background: rgba(255, 255, 255, 0.9);
 }
