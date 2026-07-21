@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poker Bot</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #1a1f1c; color: #eee;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  body { display: flex; flex-direction: column; }
+
+  header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px;
+    background: #222a26;
+    border-bottom: 1px solid #33403a;
+    font-size: 13px;
+  }
+  header a {
+    color: #d9b45b; text-decoration: none;
+  }
+  header a:hover { text-decoration: underline; }
+  header .note {
+    color: #9fb3a8; margin-left: auto; text-align: right;
+  }
+
+  iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #1a1f1c;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <a href="../index.html">&larr; Portfolio</a>
+    <span class="note">Hosted on a free server &mdash; if the table doesn't load right away, give it ~30&ndash;50s to wake up.</span>
+  </header>
+
+  <iframe src="https://pokerbot-ux5q.onrender.com" title="Poker Bot" allowfullscreen></iframe>
+
+</body>
+</html>
