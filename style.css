@@ -86,6 +86,23 @@ img {
     background-position: center;
 }
 
+.highlight-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* The .ready class is only added once the file reports it can actually play,
+   so a missing or unsupported video leaves the static image in place instead
+   of fading to a blank rectangle. */
+.highlight-card:hover .highlight-video.ready {
+    opacity: 1;
+}
+
 .highlight-title {
     position: absolute;
     left: 0;
@@ -99,4 +116,14 @@ img {
     font-size: 21px;
     color: #1a1a1a;
     background: rgba(255, 255, 255, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .highlight-card,
+    .highlight-video {
+        transition: none;
+    }
+    .highlight-card:hover {
+        transform: none;
+    }
 }
